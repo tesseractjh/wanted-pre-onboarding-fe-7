@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
-import { getTodos } from '../../api';
-import AddTodo from './AddTodo';
+import useAPI from '../../hooks/useAPI';
+import { TodoAPI } from '../../api';
 import TodoList from './TodoList';
+import AddTodo from './AddTodo';
 
 const Container = styled.div`
   overflow: hidden;
@@ -21,14 +22,12 @@ const Title = styled.h1`
 
 function Todo() {
   const [todoList, setTodoList] = useState([]);
+  const getTodos = useAPI(TodoAPI.getTodos);
 
   const fetchList = useCallback(async () => {
-      const { data, message } = await getTodos();
-      if (data) {
-        setTodoList(data);
-      } else {
-        alert(message);
-      }
+      await getTodos([], {
+        onSuccess: ({ data }) => setTodoList(data)
+      });
     },
     []
   );

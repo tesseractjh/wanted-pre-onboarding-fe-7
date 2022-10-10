@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import Input from "./Input";
 import { validateEmail, validatePassword } from '../../utils/formValidation';
-import { signIn, signUp } from '../../api';
+import useAPI from '../../hooks/useAPI';
+import { AuthAPI } from '../../api';
+import Input from "./Input";
 
 const Container = styled.div`
   display: flex;
@@ -67,6 +68,8 @@ function Login() {
   const [password, setPassword] = useState('');
   const isValid = validateEmail(email) && validatePassword(password);
   const navigate = useNavigate();
+  const signUp = useAPI(AuthAPI.signUp);
+  const signIn = useAPI(AuthAPI.signIn);
 
   const handleEmailChange = ({ currentTarget: { value } }) => {
     setEmail(value);
@@ -78,12 +81,13 @@ function Login() {
 
   const handleClick = (api) => async () => {
     if (isValid) {
-      const { ok, message } = await api(email, password);
-      if (ok) {
-        navigate('/todo');
-      } else {
-        alert(message);
-      }
+      await api([email, password], {
+        onSuccess: ({ data }) => {
+          const { access_token } = data;
+          localStorage.setItem('accessToken', access_token);
+          navigate('/todo');
+        }
+      });
     } else {
       alert('이메일 또는 비밀번호가 유효하지 않습니다!');
     }

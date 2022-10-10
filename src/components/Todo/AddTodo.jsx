@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createTodo } from '../../api';
+import styled from '@emotion/styled';
+import useAPI from '../../hooks/useAPI';
+import { TodoAPI } from '../../api';
 import useAutoResize from '../../hooks/useAutoResize';
 
 const Container = styled.div`
@@ -48,7 +48,7 @@ function AddTodo({ fetchList }) {
   const [todo, setTodo] = useState('');
   const ref = useRef(null);
   const resize = useAutoResize(ref);
-  const navigate = useNavigate();
+  const createTodo = useAPI(TodoAPI.createTodo);
 
   const handleChange = ({ currentTarget: { value } }) => {
     setTodo(value);
@@ -57,17 +57,13 @@ function AddTodo({ fetchList }) {
 
   const handleClick = async () => {
     if (todo) {
-      const { ok, message, redirect } = await createTodo(todo);
-      if (ok) {
-        setTodo('');
-        await fetchList();
-        resize();
-      } else {
-        alert(message);
-        if (redirect) {
-          navigate(redirect);
+      await createTodo([todo], {
+        onSuccess: async () => {
+          setTodo('');
+          await fetchList();
+          resize();
         }
-      }
+      });
     } else {
       alert('할 일을 입력하세요!');
     }

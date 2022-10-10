@@ -1,2 +1,2 @@
-export * from './auth';
-export * from './todo';
+export * as AuthAPI from './auth';
+export * as TodoAPI from './todo';

@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { deleteTodo, updateTodo } from '../../api';
+import styled from '@emotion/styled';
+import useAPI from '../../hooks/useAPI';
+import { TodoAPI } from '../../api';
 import TodoItem from './TodoItem';
 
 const Container = styled.ul`
@@ -18,33 +18,24 @@ const NoTodo = styled.li`
 `;
 
 function TodoList({ todoList, fetchList }) {
-  const navigate = useNavigate();
+  const deleteTodo = useAPI(TodoAPI.deleteTodo);
+  const updateTodo = useAPI(TodoAPI.updateTodo);
 
   const handleDelete = (id, onAfter) => async () => {
-    const { ok, message, redirect } = await deleteTodo(id);
-    if (ok) {
-      if (onAfter) {
+    await deleteTodo([id], {
+      onSuccess: async () => {
         await onAfter();
+        await fetchList();
       }
-      await fetchList();
-    } else {
-      alert(message);
-      if (redirect) {
-        navigate(redirect);
-      }
-    }
+    });
   };
 
   const handleSubmit = (id, todo, isCompleted) => async () => {
-    const { ok, message, redirect } = await updateTodo(id, todo, isCompleted);
-    if (ok) {
-      await fetchList();
-    } else {
-      alert(message);
-      if (redirect) {
-        navigate(redirect);
+    await updateTodo([id, todo, isCompleted], {
+      onSuccess: async () => {
+        await fetchList();
       }
-    }
+    });
   };
 
   useEffect(() => {

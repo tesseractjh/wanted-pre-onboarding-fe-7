@@ -1,67 +1,54 @@
 import axios from 'axios';
+import apiResult from '../utils/apiResult';
 
 export const getTodos = async () => {
   const { data } = await axios.get('/todos');
-  const defaultMessage = '할 일 목록을 불러오는데 실패하였습니다!';
-
-  if (!data) {
-    return { message: defaultMessage };
-  }
-
-  return { data };
+  return apiResult(data, data, {
+    defaultMsg: '할 일 목록을 불러오는데 실패하였습니다!'
+  });
 };
 
 export const createTodo = async (todo) => {
   const { data, status } = await axios.post('/todos', { todo });
-  const defaultMessage = '할 일 목록을 추가하는데 실패하였습니다!';
-
-  if (!data) {
-    return { message: defaultMessage };
-  }
-
-  const { statusCode, message } = data;
-
-  if (status === 201) {
-    return { ok: true };
-  }
-
-  if (statusCode === 401) {
-    return { ok: false, message: '로그인이 필요합니다!', redirect: '/' };
-  }
-
-  return { ok: false, message: message ?? defaultMessage };
+  return apiResult(
+    data,
+    status === 201,
+    {
+      defaultMsg: '할 일 목록을 추가하는데 실패하였습니다!',
+      401: '로그인이 필요합니다!'
+    },
+    {
+      401: '/'
+    }
+  );
 };
 
 export const updateTodo = async (id, todo, isCompleted) => {
   const { data, status } = await axios.put(`/todos/${id}`, { todo, isCompleted });
-  const defaultMessage = '할 일 목록을 수정하는데 실패하였습니다!';
-
-  if (status === 200) {
-    return { ok: true };
-  }
-
-  const { statusCode, message } = data;
-
-  if (statusCode === 401) {
-    return { ok: false, message: '로그인이 필요합니다!', redirect: '/' };
-  }
-
-  return { ok: false, message: message ?? defaultMessage };
+  return apiResult(
+    data,
+    status === 200,
+    {
+      defaultMsg: '할 일 목록을 수정하는데 실패하였습니다!',
+      401: '로그인이 필요합니다!'
+    },
+    {
+      401: '/'
+    }
+  );
 };
 
 export const deleteTodo = async (id) => {
   const { data, status } = await axios.delete(`/todos/${id}`);
-  const defaultMessage = '할 일 목록을 삭제하는데 실패하였습니다!';
-
-  if (status === 204) {
-    return { ok: true };
-  }
-
-  const { statusCode, message } = data;
-
-  if (statusCode === 401) {
-    return { ok: false, message: '로그인이 필요합니다!', redirect: '/' };
-  }
-
-  return { ok: false, message: message ?? defaultMessage };
+  return apiResult(
+    data,
+    status === 204,
+    {
+      defaultMsg: '할 일 목록을 삭제하는데 실패하였습니다!',
+      401: '로그인이 필요합니다!'
+    },
+    {
+      401: '/'
+    }
+  );
 };
