@@ -65,7 +65,6 @@ const SignInButton = styled(Button)`
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isButtonActive, setIsButtonActive] = useState(true);
   const isValid = validateEmail(email) && validatePassword(password);
   const navigate = useNavigate();
 
@@ -79,14 +78,12 @@ function Login() {
 
   const handleClick = (api) => async () => {
     if (isValid) {
-      setIsButtonActive(false);
       const { ok, message } = await api(email, password);
       if (ok) {
         navigate('/todo');
       } else {
         alert(message);
       }
-      setIsButtonActive(true);
     } else {
       alert('이메일 또는 비밀번호가 유효하지 않습니다!');
     }
@@ -115,14 +112,14 @@ function Login() {
         <ButtonContainer>
           <SignUpButton
             type="button"
-            disabled={!isValid && isButtonActive}
+            disabled={!isValid}
             onClick={handleClick(signUp)}
           >
             회원가입
           </SignUpButton>
           <SignInButton
             type="button"
-            disabled={!isValid && isButtonActive}
+            disabled={!isValid}
             onClick={handleClick(signIn)}
           >
             로그인
