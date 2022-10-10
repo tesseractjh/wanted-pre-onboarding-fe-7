@@ -21,10 +21,10 @@ function TodoList({ todoList, fetchList }) {
   const deleteTodo = useAPI(TodoAPI.deleteTodo);
   const updateTodo = useAPI(TodoAPI.updateTodo);
 
-  const handleDelete = (id, onAfter) => async () => {
+  const handleDelete = (id, onAfterDelete) => async () => {
     await deleteTodo([id], {
       onSuccess: async () => {
-        await onAfter();
+        await onAfterDelete();
         await fetchList();
       }
     });

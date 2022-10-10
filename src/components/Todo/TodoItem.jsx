@@ -142,7 +142,7 @@ function TodoItem({ id, todo, isCompleted, handleDelete, handleSubmit }) {
     setIsEditable(false);
   };
 
-  const onAfter = async () => {
+  const onAfterDelete = async () => {
     setIsDeleted(true);
     await wait(250);
   };
@@ -178,7 +178,7 @@ function TodoItem({ id, todo, isCompleted, handleDelete, handleSubmit }) {
       <Todo isCompleted={checked}>{todo}</Todo>
       <ButtonWrapper>
         <UpdateButton type="button" onClick={handleEdit}>수정</UpdateButton>
-        <DeleteButton type="button" onClick={handleDelete(id, onAfter)}>삭제</DeleteButton>
+        <DeleteButton type="button" onClick={handleDelete(id, onAfterDelete)}>삭제</DeleteButton>
       </ButtonWrapper>
     </Container>
   );
