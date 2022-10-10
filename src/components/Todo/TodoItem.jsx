@@ -35,6 +35,7 @@ const Container = styled.li`
 
 const Todo = styled.p`
   flex: 1;
+  word-break: break-all;
 
   ${({ isCompleted }) => isCompleted ? `
     text-decoration: line-through;
