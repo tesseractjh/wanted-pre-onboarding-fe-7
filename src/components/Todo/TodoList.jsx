@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import styled from '@emotion/styled';
 import useAPI from '../../hooks/useAPI';
 import { TodoAPI } from '../../api';
@@ -17,7 +16,7 @@ const NoTodo = styled.li`
   line-height: 100px;
 `;
 
-function TodoList({ todoList, fetchList }) {
+function TodoList({ todoList, setTodoList }) {
   const deleteTodo = useAPI(TodoAPI.deleteTodo);
   const updateTodo = useAPI(TodoAPI.updateTodo);
 
@@ -25,22 +24,29 @@ function TodoList({ todoList, fetchList }) {
     await deleteTodo([id], {
       onSuccess: async () => {
         await onAfterDelete();
-        await fetchList();
+        setTodoList(state => {
+          const index = state.findIndex(({ id: prevId }) => prevId === id);
+          const newState = [...state];
+          newState.splice(index, 1);
+          return newState;
+        });
       }
     });
   };
 
   const handleSubmit = (id, todo, isCompleted) => async () => {
     await updateTodo([id, todo, isCompleted], {
-      onSuccess: async () => {
-        await fetchList();
+      onSuccess: async ({ data }) => {
+        setTodoList(state => {
+          const { id } = data;
+          const index = state.findIndex(({ id: prevId }) => prevId === id);
+          const newState = [...state];
+          newState[index] = data;
+          return newState;
+        });
       }
     });
   };
-
-  useEffect(() => {
-    fetchList();
-  }, [fetchList]);
 
   return (
     <Container>
@@ -58,7 +64,6 @@ function TodoList({ todoList, fetchList }) {
                 />
             )
           : <NoTodo>할 일 목록이 없습니다! 새로운 할 일을 추가해주세요.</NoTodo>
-      
       }
     </Container>
   );

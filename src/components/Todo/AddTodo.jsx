@@ -44,7 +44,7 @@ const AddButton = styled.button`
   }
 `;
 
-function AddTodo({ fetchList }) {
+function AddTodo({ setTodoList }) {
   const [todo, setTodo] = useState('');
   const ref = useRef(null);
   const resize = useAutoResize(ref);
@@ -58,9 +58,9 @@ function AddTodo({ fetchList }) {
   const handleClick = async () => {
     if (todo) {
       await createTodo([todo], {
-        onSuccess: async () => {
+        onSuccess: ({ data }) => {
           setTodo('');
-          await fetchList();
+          setTodoList(state => [...state, data]);
           resize();
         }
       });

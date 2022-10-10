@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import useAPI from '../../hooks/useAPI';
 import { TodoAPI } from '../../api';
@@ -32,11 +32,15 @@ function Todo() {
     []
   );
 
+  useEffect(() => {
+    fetchList();
+  }, [fetchList]);
+
   return (
     <Container>
       <Title>할 일 목록</Title>
-      <AddTodo fetchList={fetchList} />
-      <TodoList todoList={todoList} fetchList={fetchList} />
+      <AddTodo setTodoList={setTodoList} />
+      <TodoList todoList={todoList} setTodoList={setTodoList} />
     </Container>
   );
 }
