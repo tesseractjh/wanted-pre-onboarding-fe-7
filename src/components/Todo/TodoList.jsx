@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import useAPI from '../../hooks/useAPI';
 import { TodoAPI } from '../../api';
 import TodoItem from './TodoItem';
+import { useCallback } from 'react';
 
 const Container = styled.ul`
   display: flex;
@@ -20,7 +21,7 @@ function TodoList({ todoList, setTodoList }) {
   const deleteTodo = useAPI(TodoAPI.deleteTodo);
   const updateTodo = useAPI(TodoAPI.updateTodo);
 
-  const handleDelete = (id, onAfterDelete) => async () => {
+  const handleDelete = useCallback((id, onAfterDelete) => async () => {
     await deleteTodo([id], {
       onSuccess: async () => {
         await onAfterDelete();
@@ -32,11 +33,11 @@ function TodoList({ todoList, setTodoList }) {
         });
       }
     });
-  };
+  }, []);
 
-  const handleSubmit = (id, todo, isCompleted) => async () => {
+  const handleSubmit = useCallback((id, todo, isCompleted) => async () => {
     await updateTodo([id, todo, isCompleted], {
-      onSuccess: async ({ data }) => {
+      onSuccess: async (data) => {
         setTodoList(state => {
           const { id } = data;
           const index = state.findIndex(({ id: prevId }) => prevId === id);
@@ -46,7 +47,7 @@ function TodoList({ todoList, setTodoList }) {
         });
       }
     });
-  };
+  }, []);
 
   return (
     <Container>

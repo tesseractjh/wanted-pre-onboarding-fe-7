@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import useAPI from '../../hooks/useAPI';
 import { TodoAPI } from '../../api';
@@ -24,17 +24,15 @@ function Todo() {
   const [todoList, setTodoList] = useState([]);
   const getTodos = useAPI(TodoAPI.getTodos);
 
-  const fetchList = useCallback(async () => {
-      await getTodos([], {
-        onSuccess: ({ data }) => setTodoList(data)
-      });
-    },
-    []
-  );
+  const fetchList = async () => {
+    await getTodos([], {
+      onSuccess: (data) => setTodoList(data)
+    });
+  };
 
   useEffect(() => {
     fetchList();
-  }, [fetchList]);
+  }, []);
 
   return (
     <Container>

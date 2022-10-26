@@ -58,7 +58,7 @@ function AddTodo({ setTodoList }) {
   const handleClick = async () => {
     if (todo) {
       await createTodo([todo], {
-        onSuccess: ({ data }) => {
+        onSuccess: (data) => {
           setTodo('');
           setTodoList(state => [...state, data]);
           resize();

@@ -82,7 +82,7 @@ function Login() {
   const handleClick = (api) => async () => {
     if (isValid) {
       await api([email, password], {
-        onSuccess: ({ data }) => {
+        onSuccess: (data) => {
           const { access_token } = data;
           localStorage.setItem('accessToken', access_token);
           navigate('/todo');

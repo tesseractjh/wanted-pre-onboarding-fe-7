@@ -1,28 +1,44 @@
 import { useNavigate } from 'react-router-dom';
 
+const defaultErrorMsg = {
+  401: '로그인이 필요합니다!'
+};
+
+const defaultRedirect = {
+  401: '/'
+};
+
 function useAPI(api) {
   const navigate = useNavigate();
 
   const API = async (params = [], config = {}) => {
     const { onSuccess, onError } = config;
-    const { ok, data, message, redirect } = await api(...params);
+    const { result, errorMsg: customErrorMsg = {}, redirect = {} } = await api(...params);
+    const { data, status } = result;
     
-    if (ok) {
+    if (status >= 200 && status < 300) {
       if (onSuccess) {
-        await onSuccess({ data });
+        await onSuccess(data);
       }
-    } else {
-      if (onError) {
-        await onError({ data, message, redirect });
-      } else {
-        alert(message);
-        if (redirect) {
-          navigate(redirect);
-        }
-      }
+      return;
     }
 
-    return { ok, data, message, redirect };
+    if (onError) {
+      await onError({ result, errorMsg: customErrorMsg, redirect });
+    } else {
+      const { message } = data ?? {};
+      const errorMsg = { ...defaultErrorMsg, ...customErrorMsg };
+      const alertMsg = errorMsg[status] || message || errorMsg.default;
+      const redirectRoute = { ...defaultRedirect, ...redirect }[status];
+
+      if (alertMsg) {
+        alert(alertMsg);
+      }
+
+      if (redirectRoute) {
+        navigate(redirectRoute);
+      }
+    }
   };
 
   return API;
