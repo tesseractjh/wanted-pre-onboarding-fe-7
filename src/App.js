@@ -7,12 +7,14 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<AuthRoute redirect="/todo" reversed />}>
-          <Route index element={<Login />} />
-        </Route>
-        <Route path="/todo" redirect="/" element={<AuthRoute redirect="/" />}>
-          <Route index element={<Todo />} />
-        </Route>
+        <Route
+          path="/"
+          element={<AuthRoute redirect="/todo" element={<Login />} reversed />}
+        />
+        <Route
+          path="/todo"
+          element={<AuthRoute redirect="/" element={<Todo />} />}
+        />
       </Routes>
     </BrowserRouter>
   );

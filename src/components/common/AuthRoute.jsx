@@ -1,10 +1,10 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
-function AuthRoute({ redirect, reversed }) {
+function AuthRoute({ redirect, element, reversed }) {
   const accessToken = localStorage.getItem('accessToken');
   const isAuthorized = reversed ? !accessToken : accessToken;
   return isAuthorized
-    ? <Outlet />
+    ? element
     : <Navigate to={redirect} />
 }
 
